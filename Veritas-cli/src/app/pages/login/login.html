@@ -1,36 +1,42 @@
-<div class="login-container">
-  <h2>Login</h2>
-  <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        ngModel
-        required
-        email
-        #emailInput="ngModel"
-      >
-      <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error">
-        Please enter a valid email.
+<div class="outer-login">
+  <div class="wrapper"></div>
+  <div class="inner-login">
+    <h1 class="login-title">Student - Sign in</h1>
+    <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
+      <div class="form-content">
+        <label for="email">Email Address</label>
+        <input
+          ngModel
+          #email="ngModel"
+          id="email"
+          name="email"
+          type="email"
+          placeholder="Enter your email address"
+          required
+        />
       </div>
-    </div>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        ngModel
-        required
-        minlength="6"
-        #passwordInput="ngModel"
-      >
-      <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)" class="error">
-        Password must be at least 6 characters.
+      <div class="form-content">
+        <label for="password">Password</label>
+        <input
+          ngModel
+          #password="ngModel"
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Enter your password"
+          required
+        />
       </div>
-    </div>
-    <button type="submit" [disabled]="loginForm.invalid">Log In</button>
-  </form>
+      <div class="button-container">
+        <button type="submit">Sign In</button>
+      </div>
+      <div class="forgot-password">
+        <a
+          href="#"
+          onclick="alert('Password reset functionality would go here')"
+          >Forgot your password?</a
+        >
+      </div>
+    </form>
+  </div>
 </div>

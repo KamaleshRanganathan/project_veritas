@@ -1,0 +1,42 @@
+<div class="outer-login">
+  <div class="wrapper"></div>
+  <div class="inner-login">
+    <h1 class="login-title">Teacher - Sign in</h1>
+    <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
+      <div class="form-content">
+        <label for="email">Email Address</label>
+        <input
+          ngModel
+          #email="ngModel"
+          id="email"
+          name="email"
+          type="email"
+          placeholder="Enter your email address"
+          required
+        />
+      </div>
+      <div class="form-content">
+        <label for="password">Password</label>
+        <input
+          ngModel
+          #password="ngModel"
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+      <div class="button-container">
+        <button type="submit">Sign In</button>
+      </div>
+      <div class="forgot-password">
+        <a
+          href="#"
+          onclick="alert('Password reset functionality would go here')"
+          >Forgot your password?</a
+        >
+      </div>
+    </form>
+  </div>
+</div>

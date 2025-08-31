@@ -92,7 +92,7 @@ export class AuthService {
   }
     }catch(error){
       console.error("Login failed:", error);
-      alert("Invalid query");
+      alert("Invalid email or password!");
     }
   }
 

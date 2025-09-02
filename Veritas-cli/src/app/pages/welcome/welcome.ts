@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-welcome',
@@ -7,5 +8,13 @@ import { Component } from '@angular/core';
   styleUrl: './welcome.css'
 })
 export class Welcome {
+  private router : Router = inject(Router);
+  
+  loginStudent(){
+    this.router.navigate(['/login']); 
+  }
 
+  loginTeacher(){
+    this.router.navigate(['/login-teacher']); 
+  }
 }

@@ -1,7 +1,8 @@
-import { Component , inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule , NgForm } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { AuthService } from '../../services/auth';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-login',
   imports: [CommonModule, FormsModule],
@@ -10,7 +11,7 @@ import { AuthService } from '../../services/auth';
 })
 export class Login {
   private authService: AuthService = inject(AuthService);
-
+  private router: Router = inject(Router);
   onLogin(loginForm: NgForm) {
     if (loginForm.invalid) {
       return;
@@ -18,5 +19,9 @@ export class Login {
     const email = loginForm.value.email;
     const password = loginForm.value.password;
     this.authService.login(email, password);
+  }
+
+  goBack() {
+    this.router.navigate(['/']);
   }
 }

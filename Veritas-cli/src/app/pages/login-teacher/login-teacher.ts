@@ -15,6 +15,7 @@ export class LoginTeacher {
   private router : Router = inject(Router);
   onLogin(loginForm: NgForm) {
     if (loginForm.invalid) {
+      alert("Invalid Username / Password");
       return;
     }
     const email = loginForm.value.email;

@@ -5,6 +5,7 @@ import { authGuard } from './guards/auth-guard';
 import { HomeTeacher } from './pages/home-teacher/home-teacher';
 import { HomeStudent } from './pages/home-student/home-student';
 import { LoginTeacher } from './pages/login-teacher/login-teacher';
+import { PageNotFound } from './pages/page-not-found/page-not-found';
 export const routes: Routes = [
     // If the user is logged in, the guard allows access to /home.
     // If not, the guard will redirect them to /login.
@@ -33,6 +34,6 @@ export const routes: Routes = [
     },
     {
         path:'**',
-        component:Welcome
+        component:PageNotFound
     }
 ];

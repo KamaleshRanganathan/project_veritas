@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-home-student',
@@ -7,5 +8,10 @@ import { Component } from '@angular/core';
   styleUrl: './home-student.css'
 })
 export class HomeStudent {
+  private authService : AuthService = inject(AuthService);
 
+  logout() {
+    this.authService.logout();
+  }
+  
 }

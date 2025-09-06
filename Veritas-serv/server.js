@@ -1,7 +1,7 @@
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://kamaleshr:IluAtpOEX90YoEvn@veritas.vitkdvd.mongodb.net/?retryWrites=true&w=majority&appName=veritas"
-
+require('dotenv').config();
+const uri = process.env.key;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {

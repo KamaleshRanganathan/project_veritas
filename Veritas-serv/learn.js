@@ -1,0 +1,10 @@
+const express = require('express');
+require('dotenv').config();
+const app = express();
+const port = 3000;
+const mongoose = require('mongoose');
+mongoose.connect(process.env.key);
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open',()=> console.log('Connected to MongoDB'));
+app.listen(port , () => console.log('Server Started on port ' + port));

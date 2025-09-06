@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, signOut, authState, User } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, signOut, authState, User , createUserWithEmailAndPassword} from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { doc, getDoc, Firestore } from '@angular/fire/firestore';
@@ -63,6 +63,23 @@ export class AuthService {
     } catch (error) {
       console.error("Login failed:", error);
       alert("Invalid email or password!");
+    }
+  }
+
+
+  async signUp(name:string,email:string,password:string) : Promise<void>{
+    // Implement sign-up logic here, e.g., using Firebase Auth's createUserWithEmailAndPassword
+    // and then storing additional user details in Firestore if needed.
+
+    try{
+      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+      const user = userCredential.user;
+      console.log('User created in Firebase:', user.uid);
+
+
+    }catch(error){
+      console.error("Sign-up failed:", error);
+      throw error; 
     }
   }
 

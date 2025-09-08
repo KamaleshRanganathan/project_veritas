@@ -31,6 +31,15 @@
       <div class="button-container">
         <button type="submit">Sign In</button>
       </div>
+      <div>
+        <div class="forgot-password" style="display: flex;justify-content: center;align-items: center;"> 
+          <p>Create an account?</p>
+          <a (click)="goToSignup()"
+          style="cursor: pointer;margin-left: 10px;"
+            >Sign Up</a
+          >
+        </div>
+      </div>
       <div style="display: flex;justify-content:space-evenly;">
       <div class="forgot-password">
         <a (click)="goBack()"

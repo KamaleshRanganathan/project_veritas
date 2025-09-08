@@ -26,4 +26,8 @@ export class LoginTeacher {
   goBack(){
     this.router.navigate(['/']);
   }
+
+  goToSignup() {
+    this.router.navigate(['/sign-up-teacher']);
+  }
 }

@@ -1,1 +1,75 @@
-<p>sign-up-teacher works!</p>
+<div class="outer-login">
+  <div class="wrapper"></div>
+  <div class="inner-login">
+    <h1 class="login-title">Student - Sign Up</h1>
+    <form #signupForm="ngForm" (ngSubmit)="oncreateAccount(signupForm)">
+      <div class="form-content">
+        <label for="name">Name</label>
+        <input
+          ngModel
+          #name="ngModel"
+          id="name"
+          name="name"
+          type="text"
+          placeholder="Enter your name"
+          required
+        />
+      </div>
+      <div class="form-content">
+        <label for="email">Email Address</label>
+        <input
+          ngModel
+          #email="ngModel"
+          id="email"
+          name="email"
+          type="email"
+          placeholder="Enter your email address"
+          required
+        />
+      </div>
+      <div class="form-content">
+        <label for="password">Password</label>
+        <input
+          ngModel
+          #password1="ngModel"
+          id="password1"
+          name="password1"
+          type="password"
+          placeholder="Enter your password"
+          required
+          minlength="8"
+        />
+      </div>
+      <div class="form-content">
+        <label for="password">Re - Password</label>
+        <input
+          ngModel
+          #password2="ngModel"
+          id="password2"
+          name="password2"
+          type="password"
+          placeholder="Enter your password again"
+          required
+          minlength="8"
+        />
+      </div>
+      <div class="button-container">
+        <button type="submit">Sign In</button>
+      </div>
+      <div style="display: flex;justify-content:space-evenly;">
+      <div class="forgot-password">
+        <a (click)="goBack()"
+        style="cursor: pointer;"
+          >Back</a
+        >
+      </div>
+      <div class="forgot-password">
+        <a
+          href="/login#"
+          >Forgot your password?</a
+        >
+      </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+.group-item {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 8px 0;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.group-item h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.group-item p {
+  margin: 4px 0;
+}

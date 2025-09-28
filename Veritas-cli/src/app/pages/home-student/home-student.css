@@ -12,16 +12,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(
-      circle at 20% 80%,
+  background: radial-gradient(circle at 20% 80%,
       rgba(120, 119, 198, 0.3) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 20%,
+      transparent 50%),
+    radial-gradient(circle at 80% 20%,
       rgba(255, 255, 255, 0.1) 0%,
-      transparent 50%
-    );
+      transparent 50%);
+  z-index: 1; /* Add z-index to keep it below content */
 }
 
 .vs-navbar {
@@ -204,4 +201,89 @@
     padding: 10px 16px;
     font-size: 0.85rem;
   }
+}
+
+.group-container {
+  width: 80%;
+  min-width: 300px;
+  display: flex;
+  flex-direction: row;
+  background-color: #5aeee7;
+  padding: 20px;
+  margin: 35px auto;
+  position: relative; /* Add position relative */
+  z-index: 5; /* Add z-index to ensure it's above the pseudo-element */
+  
+}
+
+.group-list {
+  width: 50%;
+}
+
+.group-submit {
+  width: 50%;
+  border-left: 1px solid black;
+}
+
+/* form styles */
+.form-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative; /* Add position relative */
+  z-index: 6; /* Add z-index to ensure form is clickable */
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="file"]:focus {
+  outline: none;
+  border-color: #5aeee7;
+}
+
+.submit-btn {
+  background-color: #5aeee7;
+  color: #333;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  position: relative; /* Ensure button is properly positioned */
+  z-index: 7; /* Highest z-index for the button */
+}
+
+.submit-btn:hover {
+  background-color: #4dd4cd;
+}
+
+.file-info {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #666;
 }

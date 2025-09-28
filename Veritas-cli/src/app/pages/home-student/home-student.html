@@ -19,4 +19,48 @@
       <button class="vs-navbar-logout" (click)="logout()">Logout</button>
     </div>
   </nav>
+
+  
+
+  <div class="group-container">
+    <div class="group-list">
+      <div style="width: 80%; margin: auto;">
+        <h2>Group List</h2>
+        <app-group-item 
+          *ngFor="let group of groups; trackBy: trackByGroupId" 
+          [group]="group">
+        </app-group-item>
+      </div>
+    </div>
+    
+    <div class="group-submit">
+      <div style="width: 80%; margin: auto;">
+        <h2>Document Upload Form</h2>
+        <div class="form-container">
+          <form id="documentForm">
+              <div class="form-group">
+                  <label for="docId">Document ID:</label>
+                  <input type="number" id="docId" name="docId" required>
+              </div>
+
+              <div class="form-group">
+                  <label for="docName">Document Name:</label>
+                  <input type="text" id="docName" name="docName" required>
+              </div>
+
+              <div class="form-group">
+                  <label for="docFile">Upload File:</label>
+                  <input type="file" id="docFile" name="docFile" required>
+                  <div class="file-info">Supported formats: PDF, DOC, DOCX, TXT</div>
+              </div>
+
+              <button type="submit" class="submit-btn">Submit Document</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
 </div>

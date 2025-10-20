@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { PythonShell } = require('python-shell');  // npm install python-shell
 
 // Initialize Express app
 const app = express();
@@ -170,7 +171,7 @@ app.post('/works/:teamId/:studentId/doc_content', async (req, res) => {
   }
 });
 
-// GET: Retrieve all assignments for a specific team
+// GET: Retrieve all assignments for a specific team (with plagiarism detection using all 4 algorithms)
 app.get('/works/:teamId', async (req, res) => {
   try {
     const { teamId } = req.params;
@@ -184,8 +185,44 @@ app.get('/works/:teamId', async (req, res) => {
     const assignments = await Assignment.find({ teamId })
       .populate('studentId', 'studentId name')
       .sort({ submittedAt: -1 });
-    res.status(200).json(assignments);
+
+    if (!assignments.length) {
+      return res.status(404).json({ message: 'No assignments found for this team' });
+    }
+
+    // Extract docContents for plagiarism detection
+    const documents = assignments.map(assignment => assignment.docContent);
+
+    // Run Python script for plagiarism scores
+    const options = {
+      mode: 'text',
+      pythonOptions: ['-u'],
+      scriptPath: './',  // Ensure plagiarism_detector.py is in the same directory
+      args: [JSON.stringify(documents)]
+    };
+
+    PythonShell.run('plagiarism_detector.py', options, (err, results) => {
+      if (err) {
+        console.error('Python script error:', err);
+        return res.status(500).json({ error: 'Plagiarism detection failed', assignments });
+      }
+
+      const result = JSON.parse(results[0]);
+
+      // Attach all scores to each assignment (index matches document order)
+      const enrichedAssignments = assignments.map((assignment, index) => ({
+        ...assignment.toObject(),
+        bert_score: result.bert_scores[index],
+        ngram_score: result.ngram_scores[index],
+        levenshtein_score: result.levenshtein_scores[index],
+        tfidf_score: result.tfidf_scores[index],
+        combined_score: result.combined_scores[index]
+      }));
+
+      res.status(200).json({ assignments: enrichedAssignments });
+    });
   } catch (error) {
+    console.error('Server error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

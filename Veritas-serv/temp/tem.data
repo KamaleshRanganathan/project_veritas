@@ -1,18 +1,21 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth';
+import { Groups } from '../../component/groups/groups';
 import { CommonModule } from '@angular/common'; // Import CommonModule for *ngFor
 import { ApiService } from '../../services/api';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
 
 export interface Group {
   id: string;
   name: string;
   code: string;
+  hasSubmitted: boolean;
 }
 
 @Component({
   selector: 'app-home-student',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, Groups, ReactiveFormsModule],
   templateUrl: './home-student.html',
   styleUrl: './home-student.css'
 })
@@ -29,7 +32,7 @@ export class HomeStudent implements OnInit {
 
   constructor() {
     this.uploadForm = this.formBuilder.group({
-      docFile: [null, Validators.required]
+      docContent: ['', Validators.required],
     });
     this.joinTeamForm = this.formBuilder.group({
       teamCode: ['', Validators.required]
@@ -61,24 +64,28 @@ export class HomeStudent implements OnInit {
   onFileChange(event: any): void {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
-      this.uploadForm.patchValue({
-        docFile: file
-      });
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.uploadForm.patchValue({
+          docContent: e.target.result
+        });
+      };
+      reader.readAsText(file);
     }
   }
 
   onSubmit(): void {
     if (this.uploadForm.valid && this.studentId && this.selectedTeam) {
-      const { docFile } = this.uploadForm.value;
-      this.apiService.uploadDocument(this.selectedTeam.id, this.studentId, docFile).subscribe(
+      const { docContent } = this.uploadForm.value;
+      this.apiService.submitAssignment(this.selectedTeam.id, this.studentId, docContent).subscribe(
         (response) => {
           console.log('Upload successful:', response);
-          alert('Upload successful!');
-          this.selectedTeam = null;
+          this.loadGroups(); // Refresh groups to update submission status
+          this.selectedTeam = null; // Hide the form
         },
         (error) => {
           console.error('Upload failed:', error);
-          alert('Upload failed. Please try again.');
+          alert(error.error.message || 'Upload failed');
         }
       );
     }
@@ -101,8 +108,10 @@ export class HomeStudent implements OnInit {
     }
   }
 
-  selectTeamForUpload(team: Group): void {
-    this.selectedTeam = team;
+  selectTeamForSubmission(team: Group): void {
+    if (!team.hasSubmitted) {
+      this.selectedTeam = team;
+    }
   }
 
   logout() {

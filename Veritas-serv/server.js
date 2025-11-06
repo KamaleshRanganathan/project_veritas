@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { PythonShell } = require('python-shell');  // npm install python-shell
+const multer = require('multer');
 
 // Initialize Express app
 const app = express();
@@ -10,6 +11,9 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
+
+// Multer setup for file uploads
+const upload = multer({ storage: multer.memoryStorage() });
 
 // MongoDB connection
 const connectDB = require('./config/db');
@@ -22,6 +26,7 @@ const teacherSchema = new mongoose.Schema({
   teams: [{
     teamId: { type: String, required: true },
     teamName: { type: String, required: true },
+    teamCode: { type: String, required: true, unique: true }, // Added teamCode
     registeredStudents: [{
       studentId: { type: String, required: true },
       name: { type: String, required: true },
@@ -67,9 +72,9 @@ app.post('/api/teachers', async (req, res) => {
 // POST: Create a team (embedded in teacher's document)
 app.post('/api/teams', async (req, res) => {
   try {
-    const { teamId, teamName, teacherId } = req.body;
-    if (!teamId || !teamName || !teacherId) {
-      return res.status(400).json({ message: 'Team ID, team name, and teacher ID are required' });
+    const { teamName, teacherId, teamCode } = req.body;
+    if (!teamName || !teacherId || !teamCode) {
+      return res.status(400).json({ message: 'Team name, teacher ID, and team code are required' });
     }
 
     // Check if teacher exists
@@ -78,16 +83,16 @@ app.post('/api/teams', async (req, res) => {
       return res.status(404).json({ message: 'Teacher not found' });
     }
 
-    // Check if teamId already exists in teacher's teams
-    if (teacher.teams.some(team => team.teamId === teamId)) {
-      return res.status(400).json({ message: 'Team ID already exists for this teacher' });
+    // Check if teamCode already exists for this teacher
+    if (teacher.teams.some(team => team.teamCode === teamCode)) {
+      return res.status(400).json({ message: 'Team code already exists for this teacher' });
     }
 
-    // Add team to teacher's teams array
-    teacher.teams.push({ teamId, teamName, registeredStudents: [] });
+    // Add team to teacher's teams array, using teamCode as teamId
+    teacher.teams.push({ teamId: teamCode, teamName, teamCode, registeredStudents: [] });
     await teacher.save();
 
-    res.status(201).json({ message: 'Team created successfully', team: { teamId, teamName } });
+    res.status(201).json({ message: 'Team created successfully', team: { teamId: teamCode, teamName, teamCode } });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -130,11 +135,97 @@ app.post('/api/students', async (req, res) => {
   }
 });
 
+// POST: Student joins a team using a team code
+app.post('/api/students/:studentId/join-team', async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const { teamCode } = req.body;
+
+    if (!teamCode) {
+      return res.status(400).json({ message: 'Team code is required' });
+    }
+
+    const student = await Student.findOne({ studentId });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    const teacher = await Teacher.findOne({ 'teams.teamCode': teamCode });
+    if (!teacher) {
+      return res.status(404).json({ message: 'Team not found with this code' });
+    }
+
+    const team = teacher.teams.find(t => t.teamCode === teamCode);
+    if (!team) {
+      return res.status(404).json({ message: 'Team not found with this code' });
+    }
+
+    // Check if student is already in the team
+    if (student.enrolledTeams.includes(team.teamId)) {
+      return res.status(400).json({ message: 'Student already enrolled in this team' });
+    }
+
+    // Add student to team's registeredStudents
+    team.registeredStudents.push({ studentId: student.studentId, name: student.name });
+    await teacher.save();
+
+    // Add teamId to student's enrolledTeams
+    student.enrolledTeams.push(team.teamId);
+    await student.save();
+
+    res.status(200).json({ message: 'Successfully joined team', teamName: team.teamName });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// GET: Retrieve all teams a student is enrolled in
+app.get('/api/students/:studentId/teams', async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    const student = await Student.findOne({ studentId });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    // Find all teams that the student is enrolled in
+    const enrolledTeams = await Teacher.aggregate([
+      { $unwind: '$teams' },
+      { $match: { 'teams.teamId': { $in: student.enrolledTeams } } },
+      { $project: { _id: 0, id: '$teams.teamId', name: '$teams.teamName', code: '$teams.teamCode' } }
+    ]);
+
+    res.status(200).json(enrolledTeams);
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// GET: Retrieve all teams for a specific teacher
+app.get('/api/teachers/:teacherId/teams', async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+
+    const teacher = await Teacher.findOne({ teacherId });
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+
+    res.status(200).json(teacher.teams);
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+
 // POST: Submit an assignment for a specific team and student
-app.post('/works/:teamId/:studentId/doc_content', async (req, res) => {
+app.post('/api/works/:teamId/:studentId/doc_content', upload.single('docFile'), async (req, res) => {
   try {
     const { teamId, studentId } = req.params;
-    const { docContent } = req.body;
+    const docContent = req.file.buffer.toString('utf-8');
 
     if (!docContent) {
       return res.status(400).json({ message: 'Document content is required' });
@@ -172,7 +263,7 @@ app.post('/works/:teamId/:studentId/doc_content', async (req, res) => {
 });
 
 // GET: Retrieve all assignments for a specific team (with plagiarism detection using all 4 algorithms)
-app.get('/works/:teamId', async (req, res) => {
+app.get('/api/works/:teamId', async (req, res) => {
   try {
     const { teamId } = req.params;
 
@@ -191,7 +282,10 @@ app.get('/works/:teamId', async (req, res) => {
     }
 
     // Extract docContents for plagiarism detection
-    const documents = assignments.map(assignment => assignment.docContent);
+    const documents = assignments.map(assignment => ({
+      filename: assignment.studentId.name,
+      content: assignment.docContent
+    }));
 
     // Run Python script for plagiarism scores
     const options = {
@@ -209,17 +303,17 @@ app.get('/works/:teamId', async (req, res) => {
 
       const result = JSON.parse(results[0]);
 
-      // Attach all scores to each assignment (index matches document order)
-      const enrichedAssignments = assignments.map((assignment, index) => ({
-        ...assignment.toObject(),
-        bert_score: result.bert_scores[index],
-        ngram_score: result.ngram_scores[index],
-        levenshtein_score: result.levenshtein_scores[index],
-        tfidf_score: result.tfidf_scores[index],
-        combined_score: result.combined_scores[index]
-      }));
+      // Attach combined scores to each assignment
+      const enrichedAssignments = assignments.map((assignment) => {
+        const studentName = assignment.studentId.name;
+        const studentResult = result.per_file.find(r => r.file === studentName);
+        return {
+          ...assignment.toObject(),
+          combined_score: studentResult ? studentResult.combined : 0,
+        };
+      });
 
-      res.status(200).json({ assignments: enrichedAssignments });
+      res.status(200).json({ assignments: enrichedAssignments, plagiarism: result });
     });
   } catch (error) {
     console.error('Server error:', error);
@@ -228,7 +322,7 @@ app.get('/works/:teamId', async (req, res) => {
 });
 
 // GET: Retrieve assignments for a specific student in a specific team
-app.get('/works/:teamId/:studentId', async (req, res) => {
+app.get('/api/works/:teamId/:studentId', async (req, res) => {
   try {
     const { teamId, studentId } = req.params;
 

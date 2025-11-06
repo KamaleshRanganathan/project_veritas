@@ -1,0 +1,47 @@
+<div class="container">
+  <h1>Assignments for Team {{ teamId }}</h1>
+
+  <div *ngIf="assignments.length > 0; else noAssignments">
+    <h2>Assignments List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Submission Date</th>
+          <th>Plagiarism Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let assignment of assignments">
+          <td>{{ assignment.studentId.name }}</td>
+          <td>{{ assignment.submittedAt | date: 'short' }}</td>
+          <td>{{ assignment.combined_score | percent }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="plagiarismDetails && plagiarismDetails.pairs.length > 0">
+      <h2>Suspicious Pairs</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>File 1</th>
+            <th>File 2</th>
+            <th>Similarity Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pair of plagiarismDetails.pairs">
+            <td>{{ pair.file1 }}</td>
+            <td>{{ pair.file2 }}</td>
+            <td>{{ pair.score | percent }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <ng-template #noAssignments>
+    <p>No assignments found for this team.</p>
+  </ng-template>
+</div>

@@ -14,9 +14,13 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "gridfs-stream": "^1.1.1",
     "mongodb": "^6.20.0",
-    "mongoose": "^8.19.1",
+    "mongoose": "^8.19.2",
+    "multer": "^2.0.2",
+    "multer-gridfs-storage": "^5.0.2",
     "nodemon": "^3.1.10",
+    "python-shell": "^5.0.0",
     "supabase": "^2.51.0"
   }
 }

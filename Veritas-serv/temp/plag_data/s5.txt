@@ -1,0 +1,15 @@
+## 4. The "Big Leap": External Plagiarism
+
+Right now, you are only checking students against each other. What if a student copied from Wikipedia or a blog?
+
+    How to implement:
+
+        Chunk the document: Break each student's document into individual sentences or 3-sentence paragraphs.
+
+        Search API: For each chunk, use a search engine API (like the Google Custom Search API) to search the web for that exact string.
+
+        Check for matches: If the API returns a result with a high "snippet" match, you've found a likely source.
+
+        Report: You could add a new "External Score" that shows what percentage of the document's sentences were found online.
+
+This is a very advanced feature and would virtually guarantee you the full 10 marks for "Innovation."

@@ -1,4 +1,4 @@
-<div class="outer-login">
+<div class="outer-container">
   <nav class="vs-navbar">
     <div class="vs-navbar-left">
       <div class="vs-brand">
@@ -6,61 +6,58 @@
         <span class="vs-navbar-name">Veritas</span>
       </div>
       <div class="vs-navigation">
-        <a class="vs-navbar-link active" href="home-student" >Dashboard</a>
-        <a class="vs-navbar-link" href="home-student">Groups</a>
-        <a class="vs-navbar-link" href="home-student">Settings</a>
+        <a class="vs-navbar-link active" href="/home-student">Dashboard</a>
+        <a class="vs-navbar-link" href="/home-student">Teams</a>
+        <a class="vs-navbar-link" href="/home-student">Settings</a>
       </div>
     </div>
     <div class="vs-navbar-right">
       <div class="vs-user-info">
-        <div class="vs-user-avatar">JD</div>
-        <span>John Doe</span>
+        <div class="vs-user-avatar">SD</div>
+        <span>Student</span>
       </div>
       <button class="vs-navbar-logout" (click)="logout()">Logout</button>
     </div>
   </nav>
 
-  
-
-  <div class="group-container">
-    <div class="group-list">
-      <div style="width: 80%; margin: auto;">
-        <h2>Group List</h2>
-        <app-group-item 
-          *ngFor="let group of groups; trackBy: trackByGroupId" 
-          [group]="group">
-        </app-group-item>
-      </div>
-    </div>
-    
-    <div class="group-submit">
-      <div style="width: 80%; margin: auto;">
-        <h2>Document Upload Form</h2>
-        <div class="form-container">
-          <form id="documentForm">
-              <div class="form-group">
-                  <label for="docId">Document ID:</label>
-                  <input type="number" id="docId" name="docId" required>
-              </div>
-
-              <div class="form-group">
-                  <label for="docName">Document Name:</label>
-                  <input type="text" id="docName" name="docName" required>
-              </div>
-
-              <div class="form-group">
-                  <label for="docFile">Upload File:</label>
-                  <input type="file" id="docFile" name="docFile" required>
-                  <div class="file-info">Supported formats: PDF, DOC, DOCX, TXT</div>
-              </div>
-
-              <button type="submit" class="submit-btn">Submit Document</button>
-          </form>
+  <div class="content-container">
+    <div class="join-team-container">
+      <h2>Join a New Team</h2>
+      <form [formGroup]="joinTeamForm" (ngSubmit)="onJoinTeam()">
+        <div class="form-group">
+          <label for="teamCode">Team Code:</label>
+          <input type="text" id="teamCode" formControlName="teamCode" required>
         </div>
+        <button type="submit" class="submit-btn" [disabled]="!joinTeamForm.valid">Join Team</button>
+      </form>
+    </div>
+
+    <hr>
+
+    <h2>Your Teams</h2>
+    <div *ngIf="groups.length > 0; else noTeams">
+      <div *ngFor="let group of groups" class="team-card">
+        <h3>{{ group.name }}</h3>
+        <p>Code: {{ group.code }}</p>
+        <button (click)="selectTeamForUpload(group)">Upload Work</button>
       </div>
     </div>
+    <ng-template #noTeams>
+      <p>You are not enrolled in any teams yet.</p>
+    </ng-template>
+
+    <div *ngIf="selectedTeam" class="submission-form">
+      <h3>Upload work for {{ selectedTeam.name }}</h3>
+      <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="docFile">Upload File:</label>
+          <input type="file" id="docFile" (change)="onFileChange($event)" required>
+          <div class="file-info">Supported formats: .txt</div>
+        </div>
+        <button type="submit" class="submit-btn" [disabled]="!uploadForm.valid">Submit</button>
+        <button type="button" (click)="selectedTeam = null">Cancel</button>
+      </form>
+    </div>
+
   </div>
-
-
-
 </div>

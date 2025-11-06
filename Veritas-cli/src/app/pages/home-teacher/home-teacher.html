@@ -1,1 +1,55 @@
-<p>home-teacher works!</p>
+<div class="outer-login">
+  <nav class="vs-navbar">
+    <div class="vs-navbar-left">
+      <div class="vs-brand">
+        <div class="vs-navbar-logo">V</div>
+        <span class="vs-navbar-name">Veritas</span>
+      </div>
+      <div class="vs-navigation">
+        <a class="vs-navbar-link active" href="home-teacher" >Dashboard</a>
+        <a class="vs-navbar-link" href="home-teacher">Teams</a>
+        <a class="vs-navbar-link" href="home-teacher">Settings</a>
+      </div>
+    </div>
+    <div class="vs-navbar-right">
+      <div class="vs-user-info">
+        <div class="vs-user-avatar">JD</div>
+        <span>John Doe</span>
+      </div>
+      <button class="vs-navbar-logout" (click)="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="team-creation-container">
+<div>
+  <h2>Create a New Team</h2>
+  <form [formGroup]="createTeamForm" (ngSubmit)="onCreateTeam()">
+    <div>
+      <label for="teamName">Team Name:</label>
+      <input type="text" id="teamName" formControlName="teamName">
+    </div>
+    <div>
+      <label for="teamCode">Team Code:</label>
+      <input type="text" id="teamCode" formControlName="teamCode">
+    </div>
+    <button type="submit" [disabled]="!createTeamForm.valid">Create Team</button>
+  </form>
+
+  <hr>
+
+  <h2>Your Teams</h2>
+  <div *ngIf="teams.length > 0; else noTeams">
+    <ul>
+      <li *ngFor="let team of teams">
+        <a [routerLink]="['/teams', team.teamId]">{{ team.teamName }}</a> (Code: {{ team.teamCode }})
+      </li>
+    </ul>
+  </div>
+  <ng-template #noTeams>
+    <p>You have not created any teams yet.</p>
+  </ng-template>
+
+  <button (click)="logout()">Logout</button>
+</div>
+  </div>
+</div>

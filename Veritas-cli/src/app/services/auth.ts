@@ -67,7 +67,7 @@ export class AuthService {
   }
 
 
-  async signUp(name:string,email:string,password:string) : Promise<void>{
+  async signUp(name:string,email:string,password:string) : Promise<User | null>{
     // Implement sign-up logic here, e.g., using Firebase Auth's createUserWithEmailAndPassword
     // and then storing additional user details in Firestore if needed.
 
@@ -75,7 +75,7 @@ export class AuthService {
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
       console.log('User created in Firebase:', user.uid);
-
+      return user;
 
     }catch(error){
       console.error("Sign-up failed:", error);

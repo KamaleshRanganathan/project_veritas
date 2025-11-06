@@ -19,6 +19,8 @@ export class HomeTeacher implements OnInit {
   createTeamForm: FormGroup;
   teacherId: string | null = null;
   teams: any[] = [];
+  assignments: any[] = [];
+  selectedTeamId: string | null = null;
 
   constructor() {
     this.createTeamForm = this.formBuilder.group({
@@ -69,6 +71,18 @@ export class HomeTeacher implements OnInit {
         }
       );
     }
+  }
+
+  onSelectTeam(teamId: string): void {
+    this.selectedTeamId = teamId;
+    this.apiService.getAssignments(teamId).subscribe(
+      (response) => {
+        this.assignments = response;
+      },
+      (error) => {
+        console.error('Failed to get assignments:', error);
+      }
+    );
   }
 
   logout() {

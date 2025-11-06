@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -59,5 +59,14 @@ export class ApiService {
   // Method to create a student
   createStudent(studentId: string, name: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/students`, { studentId, name });
+  }
+
+  // Method to get assignments by teamId
+  getAssignments(teamId: string): Observable<any> {
+    let params = new HttpParams();
+    if (teamId) {
+      params = params.set('teamId', teamId);
+    }
+    return this.http.get(`${this.apiUrl}/assignments`, { params });
   }
 }

@@ -353,6 +353,31 @@ app.get('/api/works/:teamId/:studentId', async (req, res) => {
   }
 });
 
+app.get('/api/assignments', async (req, res) => {
+            try {
+                // 1. Get the teamId from the request's query string
+                const { teamId } = req.query; // This will be "spak"
+
+                // 2. Build the query
+                // If no teamId is provided, query will be {} (find all)
+                // If teamId is provided, query will be { teamId: "spak" }
+                const query = {};
+                if (teamId) {
+                    query.teamId = teamId;
+                }
+
+                // 3. Find the documents in MongoDB
+                const assignments = await Assignment.find(query);
+
+                // 4. Send the data back as a JSON response
+                res.json(assignments);
+
+            } catch (err) {
+                console.error("Failed to fetch assignments:", err);
+                res.status(500).json({ error: "Internal server error" });
+            }
+        });
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

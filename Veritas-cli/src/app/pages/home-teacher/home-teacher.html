@@ -41,13 +41,29 @@
   <div *ngIf="teams.length > 0; else noTeams">
     <ul>
       <li *ngFor="let team of teams">
-        <a [routerLink]="['/teams', team.teamId]">{{ team.teamName }}</a> (Code: {{ team.teamCode }})
+        <button (click)="onSelectTeam(team.teamId)">{{ team.teamName }}</button> (Code: {{ team.teamCode }})
       </li>
     </ul>
   </div>
   <ng-template #noTeams>
     <p>You have not created any teams yet.</p>
   </ng-template>
+
+  <div *ngIf="selectedTeamId">
+    <h3>Assignments for {{ selectedTeamId }}</h3>
+    <div *ngIf="assignments.length > 0; else noAssignments">
+      <ul>
+        <li *ngFor="let assignment of assignments">
+          <p>Student ID: {{ assignment.studentId }}</p>
+          <p>Submitted At: {{ assignment.submittedAt | date }}</p>
+          <p>Content: {{ assignment.docContent }}</p>
+        </li>
+      </ul>
+    </div>
+    <ng-template #noAssignments>
+      <p>No assignments found for this team.</p>
+    </ng-template>
+  </div>
 
   <button (click)="logout()">Logout</button>
 </div>

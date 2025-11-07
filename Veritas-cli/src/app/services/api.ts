@@ -69,4 +69,11 @@ export class ApiService {
     }
     return this.http.get(`${this.apiUrl}/assignments`, { params });
   }
+
+  // Method to get plagiarism report
+  getPlagiarismReport(teamId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/plagiarism/report/${teamId}`, {
+      responseType: 'blob'
+    });
+  }
 }

@@ -12,6 +12,7 @@ export interface Group {
 
 @Component({
   selector: 'app-home-student',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './home-student.html',
   styleUrl: './home-student.css'

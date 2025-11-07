@@ -21,51 +21,50 @@
   </nav>
 
   <div class="team-creation-container">
-<div>
-  <h2>Create a New Team</h2>
-  <form [formGroup]="createTeamForm" (ngSubmit)="onCreateTeam()">
-    <div>
-      <label for="teamName">Team Name:</label>
-      <input type="text" id="teamName" formControlName="teamName">
-    </div>
-    <div>
-      <label for="teamCode">Team Code:</label>
-      <input type="text" id="teamCode" formControlName="teamCode">
-    </div>
-    <button type="submit" [disabled]="!createTeamForm.valid">Create Team</button>
-  </form>
+  <div>
+    <h2>Create a New Team</h2>
+    <form [formGroup]="createTeamForm" (ngSubmit)="onCreateTeam()">
+      <div>
+        <label for="teamName">Team Name:</label>
+        <input type="text" id="teamName" formControlName="teamName">
+      </div>
+      <div>
+        <label for="teamCode">Team Code:</label>
+        <input type="text" id="teamCode" formControlName="teamCode">
+      </div>
+      <button type="submit" [disabled]="!createTeamForm.valid">Create Team</button>
+    </form>
 
-  <hr>
+    <hr>
 
-  <h2>Your Teams</h2>
-  <div *ngIf="teams.length > 0; else noTeams">
-    <ul>
-      <li *ngFor="let team of teams">
-        <button (click)="onSelectTeam(team.teamId)">{{ team.teamName }}</button> (Code: {{ team.teamCode }})
-      </li>
-    </ul>
-  </div>
-  <ng-template #noTeams>
-    <p>You have not created any teams yet.</p>
-  </ng-template>
-
-  <div *ngIf="selectedTeamId">
-    <h3>Assignments for {{ selectedTeamId }}</h3>
-    <div *ngIf="assignments.length > 0; else noAssignments">
+    <h2>Your Teams</h2>
+    <div *ngIf="teams.length > 0; else noTeams">
       <ul>
-        <li *ngFor="let assignment of assignments">
-          <p>Student ID: {{ assignment.studentId }}</p>
-          <p>Submitted At: {{ assignment.submittedAt | date }}</p>
-          <p>Content: {{ assignment.docContent }}</p>
+        <li *ngFor="let team of teams">
+          <button (click)="onSelectTeam(team.teamId)">{{ team.teamName }}</button> (Code: {{ team.teamCode }})
         </li>
       </ul>
     </div>
-    <ng-template #noAssignments>
-      <p>No assignments found for this team.</p>
+    <ng-template #noTeams>
+      <p>You have not created any teams yet.</p>
     </ng-template>
-  </div>
 
-  <button (click)="logout()">Logout</button>
-</div>
+    <div *ngIf="selectedTeamId">
+      <h3>Assignments for {{ selectedTeamId }}</h3>
+      <button (click)="checkPlagiarism()" [disabled]="!selectedTeamId">Check Plagiarism</button>
+      <div *ngIf="assignments.length > 0; else noAssignments">
+        <ul>
+          <li *ngFor="let assignment of assignments">
+            <p>Student ID: {{ assignment.studentId }}</p>
+            <p>Submitted At: {{ assignment.submittedAt | date }}</p>
+            <p>Content: {{ assignment.docContent }}</p>
+          </li>
+        </ul>
+      </div>
+      <ng-template #noAssignments>
+        <p>No assignments found for this team.</p>
+      </ng-template>
+    </div>
+  </div>
   </div>
 </div>

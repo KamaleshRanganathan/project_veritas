@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-teacher',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login-teacher.html',
   styleUrl: './login-teacher.css'

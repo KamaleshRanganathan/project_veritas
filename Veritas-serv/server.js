@@ -378,8 +378,158 @@ app.get('/api/assignments', async (req, res) => {
             }
         });
 
+const PDFDocument = require('pdfkit');
+
+
+
+app.get('/api/plagiarism/report/:teamId', async (req, res) => {
+
+  try {
+
+    const { teamId } = req.params;
+
+
+
+    // Check if team exists
+
+    const teacher = await Teacher.findOne({ 'teams.teamId': teamId });
+
+    if (!teacher) {
+
+      return res.status(404).json({ message: 'Team not found' });
+
+    }
+
+
+
+    const assignments = await Assignment.find({ teamId })
+
+      .populate('studentId', 'studentId name')
+
+      .sort({ submittedAt: -1 });
+
+
+
+    if (!assignments.length) {
+
+      return res.status(404).json({ message: 'No assignments found for this team' });
+
+    }
+
+
+
+    // Extract docContents for plagiarism detection
+
+    const documents = assignments.map(assignment => ({
+
+      filename: assignment.studentId.name,
+
+      content: assignment.docContent
+
+    }));
+
+
+
+    // Run Python script for plagiarism scores
+
+    const options = {
+
+      mode: 'text',
+
+      pythonOptions: ['-u'],
+
+      scriptPath: './',  // Ensure plagiarism_detector.py is in the same directory
+
+      args: [JSON.stringify(documents)]
+
+    };
+
+
+
+    PythonShell.run('plagiarism_detector.py', options, (err, results) => {
+
+      if (err) {
+
+        console.error('Python script error:', err);
+
+        return res.status(500).json({ error: 'Plagiarism detection failed' });
+
+      }
+
+
+
+      const result = JSON.parse(results[0]);
+
+
+
+      // Generate PDF
+
+      const doc = new PDFDocument();
+
+      res.setHeader('Content-Type', 'application/pdf');
+
+      res.setHeader('Content-Disposition', `attachment; filename=plagiarism_report_${teamId}.pdf`);
+
+      doc.pipe(res);
+
+
+
+      doc.fontSize(25).text('Plagiarism Report', { align: 'center' });
+
+      doc.fontSize(16).text(`Team: ${teamId}`, { align: 'center' });
+
+      doc.moveDown();
+
+
+
+      doc.fontSize(14).text('Overall Similarity Matrix', { underline: true });
+
+      result.matrix.forEach(row => {
+
+        doc.text(row.join(', '));
+
+      });
+
+      doc.moveDown();
+
+
+
+      doc.fontSize(14).text('Per-File Results', { underline: true });
+
+      result.per_file.forEach(fileResult => {
+
+        doc.fontSize(12).text(`File: ${fileResult.file}`);
+
+        doc.text(`Combined Score: ${fileResult.combined.toFixed(2)}`);
+
+        doc.moveDown();
+
+      });
+
+
+
+      doc.end();
+
+    });
+
+  } catch (error) {
+
+    console.error('Server error:', error);
+
+    res.status(500).json({ message: 'Server error', error: error.message });
+
+  }
+
+});
+
+
+
 // Start server
+
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
+
   console.log(`Server running on port ${PORT}`);
+
 });

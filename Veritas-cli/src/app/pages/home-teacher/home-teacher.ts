@@ -7,7 +7,8 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home-teacher',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './home-teacher.html',
   styleUrl: './home-teacher.css'
 })
@@ -36,6 +37,10 @@ export class HomeTeacher implements OnInit {
         this.loadTeams();
       }
     });
+  }
+
+  logout() {
+    this.authService.logout();
   }
 
   loadTeams(): void {
@@ -85,7 +90,18 @@ export class HomeTeacher implements OnInit {
     );
   }
 
-  logout() {
-    this.authService.logout();
+  checkPlagiarism(): void {
+    if (this.selectedTeamId) {
+      this.apiService.getPlagiarismReport(this.selectedTeamId).subscribe(
+        (response) => {
+          const file = new Blob([response], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          window.open(fileURL);
+        },
+        (error) => {
+          console.error('Failed to get plagiarism report:', error);
+        }
+      );
+    }
   }
 }

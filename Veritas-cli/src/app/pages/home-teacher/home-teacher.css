@@ -61,7 +61,7 @@ input[type="number"]:focus {
 }
 
 .outer-login {
-  height: 100vh;
+  min-height: 100vh;
   padding-top: 24px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
@@ -261,4 +261,23 @@ input[type="number"]:focus {
     padding: 10px 16px;
     font-size: 0.85rem;
   }
+}
+
+
+
+.team-button{
+  display: block;
+  width: 80%;
+  margin: auto;
+  padding: 20px 10px;
+  font-weight: 700;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-shadow: black;
+}
+
+.team-button:hover{
+  background-color: #cecccc;
+  cursor: pointer;
 }

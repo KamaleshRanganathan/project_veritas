@@ -26,6 +26,7 @@ export class HomeStudent implements OnInit {
   joinTeamForm: FormGroup; // New form for joining a team
   groups: Group[] = [];
   studentId: string | null = null;
+  userEmail: string | null = null;
   selectedTeam: Group | null = null;
 
   constructor() {
@@ -41,6 +42,7 @@ export class HomeStudent implements OnInit {
     this.authService.authState$.subscribe(user => {
       if (user) {
         this.studentId = user.uid;
+        this.userEmail = user.email;
         this.loadGroups();
       }
     });

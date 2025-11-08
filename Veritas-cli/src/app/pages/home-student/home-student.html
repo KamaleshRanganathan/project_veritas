@@ -1,4 +1,4 @@
-<div class="outer-container">
+<div class="outer-login">
   <nav class="vs-navbar">
     <div class="vs-navbar-left">
       <div class="vs-brand">
@@ -6,22 +6,21 @@
         <span class="vs-navbar-name">Veritas</span>
       </div>
       <div class="vs-navigation">
-        <a class="vs-navbar-link active" href="/home-student">Dashboard</a>
-        <a class="vs-navbar-link" href="/home-student">Teams</a>
-        <a class="vs-navbar-link" href="/home-student">Settings</a>
+        <!-- <a class="vs-navbar-link " href="/home-student">Dashboard</a> -->
+        <a class="vs-navbar-link active" href="/home-student">Teams</a>
+        <!-- <a class="vs-navbar-link" href="/home-student">Settings</a> -->
       </div>
     </div>
     <div class="vs-navbar-right">
       <div class="vs-user-info">
-        <div class="vs-user-avatar">SD</div>
-        <span>Student</span>
+        <span>{{userEmail}}</span>
       </div>
       <button class="vs-navbar-logout" (click)="logout()">Logout</button>
     </div>
   </nav>
 
-  <div class="content-container">
-    <div class="join-team-container">
+  <div class="team-creation-container">
+    <div class="form-container">
       <h2>Join a New Team</h2>
       <form [formGroup]="joinTeamForm" (ngSubmit)="onJoinTeam()">
         <div class="form-group">
@@ -39,14 +38,14 @@
       <div *ngFor="let group of groups" class="team-card">
         <h3>{{ group.name }}</h3>
         <p>Code: {{ group.code }}</p>
-        <button (click)="selectTeamForUpload(group)">Upload Work</button>
+        <button (click)="selectTeamForUpload(group)" class="team-button">Upload Work</button>
       </div>
     </div>
     <ng-template #noTeams>
       <p>You are not enrolled in any teams yet.</p>
     </ng-template>
 
-    <div *ngIf="selectedTeam" class="submission-form">
+    <div *ngIf="selectedTeam" class="form-container">
       <h3>Upload work for {{ selectedTeam.name }}</h3>
       <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
@@ -54,8 +53,10 @@
           <input type="file" id="docFile" (change)="onFileChange($event)" required>
           <div class="file-info">Supported formats: .txt</div>
         </div>
-        <button type="submit" class="submit-btn" [disabled]="!uploadForm.valid">Submit</button>
-        <button type="button" (click)="selectedTeam = null">Cancel</button>
+        <div style="display: flex;gap: 30px;">
+          <button type="submit" class="submit-btn" [disabled]="!uploadForm.valid">Submit</button>
+          <button type="button" (click)="selectedTeam = null" class="submit-btn">Cancel</button>
+        </div>
       </form>
     </div>
 

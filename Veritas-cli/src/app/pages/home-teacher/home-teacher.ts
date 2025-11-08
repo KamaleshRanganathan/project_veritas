@@ -19,6 +19,7 @@ export class HomeTeacher implements OnInit {
 
   createTeamForm: FormGroup;
   teacherId: string | null = null;
+  userEmail: string | null = null;
   teams: any[] = [];
   assignments: any[] = [];
   selectedTeamId: string | null = null;
@@ -34,6 +35,7 @@ export class HomeTeacher implements OnInit {
     this.authService.authState$.subscribe(user => {
       if (user) {
         this.teacherId = user.uid;
+        this.userEmail = user.email;
         this.loadTeams();
       }
     });
